@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Лабиринт</title>
+<style>
+  body {
+    background-color: lavender;
+    display: flex;
+    flex-direction: column; /* Ensures that content is organized vertically */
+    align-items: center; /* Centers content horizontally */
+    justify-content: center; /* Centers content vertically */
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  canvas {
+    background-color: white;
+    border: 2px solid #333;
+    margin-top: 20px; /* Space between the text and the canvas */
+  }
+  #message {
+    margin-top: 20px;
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+  }
+  .princess {
+    color: purple;
+  }
+</style>
+</head>
+<body>
+<h2 id="title">Пройди лабиринт, солнышко! Просто нажимай на ячейки</h2>
+<canvas id="mazeCanvas" width="400" height="400"></canvas>
+<p id="message"></p>
+<script>
+const canvas = document.getElementById('mazeCanvas');
+if (canvas.getContext) {
+    const ctx = canvas.getContext('2d');
+    const mazeSize = 8; // Smaller maze size for easier rendering
+    const cellSize = canvas.width / mazeSize;
+    let maze = [];
+    let start = {x: 0, y: 0};
+    let end = {x: mazeSize - 1, y: mazeSize - 1};
+
+    function generateMaze() {
+        // A simple hardcoded maze for consistency
+        maze = [
+            [0, 1, 1, 1, 0, 1, 0, 1],
+            [0, 0, 1, 0, 0, 1, 0, 1],
+            [1, 0, 1, 1, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 0, 0, 1],
+            [1, 1, 1, 1, 1, 1, 0, 1],
+            [1, 0, 0, 0, 0, 1, 0, 0],
+            [1, 1, 1, 1, 0, 1, 0, 0], // Changed this line, making the cell at x=6, y=6 a '0'
+            [1, 1, 1, 1, 0, 0, 0, 0]
+        ];
+    }
+
+    function drawMaze() {
+        for (let y = 0; y < mazeSize; y++) {
+            for (let x = 0; x < mazeSize; x++) {
+                ctx.fillStyle = maze[y][x] === 1 ? 'black' : 'white';
+                ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+            }
+        }
+        // Mark the start and end
+        ctx.fillStyle = 'green'; // Start
+        ctx.fillRect(start.x * cellSize, start.y * cellSize, cellSize, cellSize);
+        ctx.fillStyle = 'red'; // End
+        ctx.fillRect(end.x * cellSize, end.y * cellSize, cellSize, cellSize);
+    }
+
+    canvas.addEventListener('click', function(event) {
+        const rect = canvas.getBoundingClientRect();
+        const x = Math.floor((event.clientX - rect.left) / cellSize);
+        const y = Math.floor((event.clientY - rect.top) / cellSize);
+        if (maze[y][x] === 0) {
+            ctx.fillStyle = 'blue'; // Mark the path
+            ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+            if (x === end.x && y === end.y) {
+                document.getElementById('message').innerHTML = 'Мир тебе, спокойной ночи, спокойной ночи, спокойной ночи, спокойной ночи, спокойной ночи, <span class="princess">принцесса</span>!';
+            }
+        }
+    });
+
+    generateMaze();
+    drawMaze();
+}
+</script>
+</body>
+</html>
